@@ -79,21 +79,10 @@ def dec2bin(num):
     return res
  
 # Permute function to rearrange the bits
- 
- 
-# def permute(k, arr, n):
-#     permutation = ""
-#     for i in range(0, n):
-#         permutation = permutation + k[arr[i] ]
-#     return permutation
-
 def permute(k, arr, n):
     permutation = ""
-    for i in range(n):
-        index = arr[i] - 1  # Convert from 1-based index to 0-based index
-        if index < 0 or index >= len(k):
-            raise ValueError("Index {} is out of range for key of length {}".format(index, len(k)))
-        permutation += k[index]
+    for i in range(0, n):
+        permutation = permutation + k[arr[i] - 1]
     return permutation
  
 # shifting the bits towards left by nth shifts
