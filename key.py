@@ -9,20 +9,36 @@ from algorithm import bin2hex
 key = "AABB09182736CCDDAABB09182736AB"
 key = hex2bin(key)
 print(key)
- 
+print(len(key))
+
+# def compress_key(original_key, keyp):
+#     compressed_key = ""
+#     for index in keyp:
+     
+        
+#         # Ensure index is within the range of the original key
+#         if adjusted_index < len(original_key):
+#             compressed_key += original_key[adjusted_index]
+#         else:
+#             # Handle the case where the index exceeds the length of the original key
+#             # You can choose to ignore or handle this condition based on your requirements
+#             pass
+#     return compressed_key
+
 # --parity bit drop table
 keyp = [58, 11, 72, 21, 40, 27, 16, 93, 65, 78, 5, 64, 47, 34,
-        57, 88, 26, 59, 11, 48, 35, 54, 117, 10, 101, 92, 86, 17,
+        57, 88, 26, 60, 11, 48, 35, 54, 117, 10, 101, 92, 86, 17,
         4, 56, 94, 41, 87, 71, 96, 25, 79, 46, 109, 39, 107, 80,
-        23, 32, 97, 14, 55, 85, 102, 2113, 38, 115, 44, 110, 6,
-        12, 84, 50, 77, 66, 20, 118, 74, 81, 51, 106, 103, 24, 63,
+        23, 32, 97, 15, 55, 85, 102, 2113, 38, 115, 45, 110, 6,
+        12, 84, 50, 77, 66, 20, 118, 75, 81, 51, 106, 103, 24, 63,
         36, 67, 73, 9, 43, 22, 91, 19, 52, 114, 7, 108, 111, 98,
-        3, 49, 89, 31, 61, 37, 95, 29, 68, 100, 69, 116, 82, 33,
-        42, 18, 70, 53, 76, 8, 83, 28, 112, 99, 13, 119, 104, 62]
+        3, 49, 90, 31, 61, 37, 95, 30, 68, 100, 69, 116, 82, 33,
+        42, 18, 70, 53, 76, 8, 83, 28, 112, 99, 13, 0, 105, 62]
  
 # getting 112 bit key from 120 bit using the parity bits
-key = permute(key, keyp, 112)
+key = permute(key, keyp,112)
 print(key)
+print(len(key))
  
 # Number of bit shifts
 shift_table = [1, 1, 2, 2,
