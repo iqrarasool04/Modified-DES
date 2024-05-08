@@ -2,6 +2,8 @@ from algorithm import hex2bin
 from algorithm import permute
 from algorithm import shift_left
 from algorithm import bin2hex
+from algorithm import xor
+
 
 # Key generation
 # --hex to binary
@@ -47,6 +49,9 @@ shift_table = [1, 1, 2, 2,
                1, 2, 2, 2,
                2, 2, 2, 1]
 
+left_1 = key[0:56]
+right_1 = key[56:128]
+
 # Key- Compression Table : Compression of key from 56 bits to 48 bits
 key_comp = [14, 17, 11, 24, 1, 5,
             3, 28, 15, 6, 21, 10,
@@ -58,21 +63,40 @@ key_comp = [14, 17, 11, 24, 1, 5,
             46, 42, 50, 36, 29, 32]
  
 # Splitting
-left = key[0:28]    # rkb for RoundKeys in binary
-right = key[28:56]  # rk for RoundKeys in hexadecimal
- 
+left_l = left_1[0:28]    # rkb for RoundKeys in binary
+right_l = left_1[28:56]  # rk for RoundKeys in hexadecimal
+
+left_r = right_1[0:28]
+right_r = right_1[28:56]
+
 rkb = []
 rk = []
 for i in range(0, 16):
     # Shifting the bits by nth shifts by checking from shift table
-    left = shift_left(left, shift_table[i])
-    right = shift_left(right, shift_table[i])
+    #left 2 boxes
+    left_l = shift_left(left_l, shift_table[i])
+    right_l = shift_left(right_l, shift_table[i])
+
+    #right 2 boxes
+    left_r = shift_left(left_r, shift_table[i])
+    right_r = shift_left(right_r, shift_table[i])
+
  
     # Combination of left and right string
-    combine_str = left + right
+    combine_str1 = left_l + right_l
+
+    combine_str2 = left_r + right_r
+
+    
  
     # Compression of key from 56 to 48 bits
-    round_key = permute(combine_str, key_comp, 48)
+    round_key1 = permute(combine_str1, key_comp, 48)
+#     print(round_key1)
+    round_key2 = permute(combine_str2, key_comp, 48)
+#     print(round_key2)
+
+    round_key = xor(round_key1,round_key2)
+    print(i,round_key)
  
     rkb.append(round_key)
     rk.append(bin2hex(round_key))
