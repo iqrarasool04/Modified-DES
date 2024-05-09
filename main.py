@@ -3,7 +3,8 @@ from algorithm import encrypt
 from key import rkb
 from key import rk
 
-pt = "123456ABCD132536"
+# pt = "123456ABCD132536"
+pt = "123456ABCD132539"
 print("Encryption")
 cipher_text = bin2hex(encrypt(pt, rkb, rk))
 print("Cipher Text : ", cipher_text)

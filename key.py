@@ -43,11 +43,15 @@ key = permute(key, keyp, 112)
 print(key)
 print(len(key))
  
-# Number of bit shifts
+# # Number of bit shifts
 shift_table = [1, 1, 2, 2,
                2, 2, 2, 2,
                1, 2, 2, 2,
                2, 2, 2, 1]
+# shift_table = [1, 2, 1, 2,
+#                2, 1, 1, 2,
+#                2, 2, 1, 1,
+#                1, 1, 2, 2]
 
 left_1 = key[0:56]
 right_1 = key[56:128]
