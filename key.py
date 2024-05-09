@@ -86,8 +86,6 @@ for i in range(0, 16):
     combine_str1 = left_l + right_l
 
     combine_str2 = left_r + right_r
-
-    
  
     # Compression of key from 56 to 48 bits
     round_key1 = permute(combine_str1, key_comp, 48)
