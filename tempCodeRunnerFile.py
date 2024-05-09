@@ -1,2 +1,2 @@
-output_cipher = round_17(cipher_text, remaining_80_bits)
-# print("Output Cipher Text:", output_cipher)
+zero_count = output_subframes.count('0')  # Count the number of '0000' subframes
+        # print(zero_count)
