@@ -12,7 +12,7 @@ print(len(cipher_text))
 #                       # Continue generating all 2^120 keys
 #                       ]
 # Generate a subset of keys for demonstration (e.g., first 10 keys)
-all_possible_keys = [format(i, '0120b') for i in range(1000)]
+all_possible_keys = [format(i, '0120b') for i in range(2**120)]
 all_possible_keys_hex = [bin2hex(key) for key in all_possible_keys]
 
 # Try each key to decrypt the cipher text
