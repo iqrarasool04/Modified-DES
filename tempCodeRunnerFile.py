@@ -1,1 +1,2 @@
-        print(key_subframe)
+print(remaining_80_bits)
+print(len(remaining_80_bits))
