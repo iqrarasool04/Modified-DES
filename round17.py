@@ -1,4 +1,7 @@
 from algorithm import xor
+from algorithm import hex2bin
+
+
 import random
 
 # def round_17(ciphertext, key):
