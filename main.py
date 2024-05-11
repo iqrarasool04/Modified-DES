@@ -15,8 +15,9 @@ print("Cipher Text (After Round 17)", bin2hex(output_cipher))
 output = inverse_round_17(output_cipher, remaining_80_bits)
 print('Cipher Text (Round 17 undone)',bin2hex(output))
 # print(output)
+cipherText = bin2hex(output)
 print("Decryption")
 rkb_rev = rkb[::-1]
 rk_rev = rk[::-1]
-text = bin2hex(encrypt(output, rkb_rev, rk_rev))
+text = bin2hex(encrypt(cipherText, rkb_rev, rk_rev))
 print("Plain Text : ", text)
