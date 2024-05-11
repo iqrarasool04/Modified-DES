@@ -189,9 +189,23 @@ final_perm = [40, 8, 48, 16, 56, 24, 64, 32,
               33, 1, 41, 9, 49, 17, 57, 25]
  
  
+from Crypto.Cipher import AES
+import binascii
+
+# Initialize AES cipher
+aes_cipher = AES.new(b'\x00' * 16, AES.MODE_ECB)
+
+# Generate AES S-box
+AES_SBOX = []
+for i in range(256):
+    block = bytes([i]) + bytes(15)
+    encrypted_block = aes_cipher.encrypt(block)
+    AES_SBOX.append(binascii.hexlify(encrypted_block).decode())
+
+# Modify the encrypt function to use the AES S-box
 def encrypt(pt, rkb, rk):
     pt = hex2bin(pt)
- 
+
     # Initial Permutation
     pt = permute(pt, initial_perm, 64)
     print("After initial permutation", bin2hex(pt))
@@ -200,37 +214,37 @@ def encrypt(pt, rkb, rk):
     left = pt[0:32]
     right = pt[32:64]
     for i in range(0, 16):
-        #  Expansion D-box: Expanding the 32 bits data into 48 bits
+        # Expansion D-box: Expanding the 32 bits data into 48 bits
         right_expanded = permute(right, exp_d, 48)
- 
+
         # XOR RoundKey[i] and right_expanded
         xor_x = xor(right_expanded, rkb[i])
- 
-        # S-boxex: substituting the value from s-box table by calculating row and column
+
+        # S-box substitution using AES S-box
         sbox_str = ""
         for j in range(0, 8):
             row = bin2dec(int(xor_x[j * 6] + xor_x[j * 6 + 5]))
-            col = bin2dec(
-                int(xor_x[j * 6 + 1] + xor_x[j * 6 + 2] + xor_x[j * 6 + 3] + xor_x[j * 6 + 4]))
-            val = sbox[j][row][col]
-            sbox_str = sbox_str + dec2bin(val)
- 
+            col = bin2dec(int(xor_x[j * 6 + 1:j * 6 + 5]))
+            val = AES_SBOX[row * 16 + col]
+            sbox_str = sbox_str + val
+
         # Straight D-box: After substituting rearranging the bits
         sbox_str = permute(sbox_str, per, 32)
- 
+
         # XOR left and sbox_str
         result = xor(left, sbox_str)
         left = result
- 
+
         # Swapper
-        if(i != 15):
+        if i != 15:
             left, right = right, left
         print("Round ", i + 1, " ", bin2hex(left),
               " ", bin2hex(right), " ", rk[i])
  
     # Combination
     combine = left + right
- 
+
     # Final permutation: final rearranging of bits to get cipher text
     cipher_text = permute(combine, final_perm, 64)
     return cipher_text
+

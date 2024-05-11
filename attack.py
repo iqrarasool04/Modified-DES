@@ -13,9 +13,16 @@ all_possible_keys_hex = [bin2hex(key) for key in all_possible_keys]
 for possible_key in all_possible_keys:
     possible_key_hex = bin2hex(possible_key)
     print("Trying key:", possible_key_hex)
+    
+    # Decrypt the cipher text using the current key
     decrypted_text = encrypt(cipher_text, rkb, rk)
     
-    # Check if the decrypted text is the original plaintext
+    # Check if the decrypted text matches the original plaintext
     if decrypted_text == cipher_text:
         print("Key found:", possible_key_hex)
-        break
+        break  # Exit the loop if the key is found
+
+    # Print progress every 10,000 keys
+    if index % 10000 == 0:
+        print("Tried {} keys...".format(index))
+

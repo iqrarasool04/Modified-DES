@@ -1,3 +1,4 @@
+from algorithm import xor
 import random
 from algorithm import dec2bin
 
