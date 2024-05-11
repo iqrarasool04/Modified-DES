@@ -1,63 +1,45 @@
-from algorithm import xor
 import random
-from algorithm import hex2bin
-from algorithm import bin2hex
-from key import remaining_80_bits
-from main import cipher_text
+from algorithm import dec2bin
 
 import random
+
+def b2d(binary):
+    decimal = 0
+    power = len(binary) - 1
+    for digit in binary:
+        decimal += int(digit) * (2 ** power)
+        power -= 1
+    return decimal
 
 def round_17(ciphertext, key):
     # Divide ciphertext into 16 sub-frames of 4 bits each
     subframes = [ciphertext[i:i+4] for i in range(0, len(ciphertext), 4)]
-    print(subframes)
+    # Divide  into 16 sub-frames of 5 bits each
+    keyframes = [b2d(key[i:i+5]) for i in range(0, len(key), 5)]
+    # print(subframes)
+    # print(keyframes)
+    
+    CT_b = [[] for _ in range(32)]
 
-    # Create output sub-frames list
-    output_subframes = [['0']] * 32
+    finalCT = []
+    randomsAdded = 0
 
-    # Map each input sub-frame to an output sub-frame using the key
+    for i in range(16):
+        CT_b[keyframes[i]].append(subframes[i])
+            
     for i in range(32):
-        key_subframe = int(key[i*5:i*5+5], 2)
-        print(key_subframe)
+        for j in range(len(CT_b[i])):
+            finalCT.append(CT_b[i][j])
 
-        # Check if there's already a value at this index
-        if output_subframes[key_subframe] == ['0']:
-            output_subframes[key_subframe] = [subframes[i]]
-            print(output_subframes)
-        else:
-            output_subframes[key_subframe].append(subframes[i])
-            print(output_subframes)
+        if len(CT_b[i]) == 0 and len(finalCT) <= i and randomsAdded < 16:
+            finalCT.append(dec2bin(random.randint(0, 15)))
+            randomsAdded+=1    
+    # print(CT_b)
+    # print(finalCT, len(finalCT))
 
-        if i == 15:
-            break
-
-    # Fill the remaining 16 sub-frames randomly with zeros and ones
-    for i in range(32):
-        if output_subframes[i] == ['0']:
-            output_subframes[i] = [format(random.randint(0, 15), '04b')]
-
-    # Concatenate output sub-frames to get the final ciphertext
-    final_ciphertext = ''.join([''.join(item) for item in output_subframes])
-
-    return final_ciphertext
+    return ''.join([''.join(item) for item in finalCT])
 
 
-
-# Example usage
-# print(remaining_80_bits)
-# print(len(remaining_80_bits))
-# print(hex2bin(cipher_text))
-# print(len(hex2bin(cipher_text)))
-# key = "00101010101010101010101010101010101010101010101010101010101010101010101010"  # 80-bit key
-# ciphertext = "1100110011001100110011001100110011001100110011001100110011001100"  # 64-bit ciphertext
-cipher_text = hex2bin(cipher_text)
-output_cipher = round_17(cipher_text, remaining_80_bits)
-print("Output Cipher Text:", output_cipher)
-print("Output Cipher Text (hex):", bin2hex(output_cipher))
-print(len(output_cipher))
-# original_text = hex2bin(original_text)
-# original_text = inverse_round_17(hex2bin(cipher_text), remaining_80_bits)
-# print("Original Text:", original_text)
-# output_plain = inverse_round_17(hex2bin(output_cipher), remaining_80_bits)
-# print("Output Plain Text after Round 17:", output_plain)
-# print(len(output_plain))
+# cipher_text = hex2bin(cipher_text)
+# output_cipher = round_17(cipher_text, remaining_80_bits)
+# print("Cipher Text (After Round 17)", bin2hex(output_cipher))

@@ -5,24 +5,40 @@ from algorithm import bin2hex
 import random
 
 # Key generation
-# --hex to binary
-# key = "AABB09182736CCDD"
-# key = "AABB09182736CCDDAABB09182736AB"
-key = 'A1B2C3D4E5F67890A1B2C3D4E5F67890A1EA'
-key = hex2bin(key)
-# print(key)
-# print(len(key))
 
-# Extract a random 64-bit key from the 136-bit key
-start_index = random.randint(0, len(key) - 64)
-random_64_bit_key = key[start_index:start_index+64]
-# print(random_64_bit_key)
-# print(len(random_64_bit_key))
+# Parity bit drop table to extract 80 bits from a 144-bit key
+keyp_80_bits = [1,2, 3,4, 5,6, 7,8, 9,10, 11,12, 13,14, 15,16, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39,
+                41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 
+                79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105, 107, 109, 111, 113,
+                115, 117, 119, 121, 123, 125, 127, 129, 131, 133, 135, 137, 139, 141, 143]
 
-# Store the remaining 80 bits
-remaining_80_bits = key[:start_index] + key[start_index+64:]
-# print(remaining_80_bits)
+def extract_80_and_64_bit_keys(key):
+    # Extracting the 80-bit key using the parity bit drop table
+    remaining_80_bits = permute(key, keyp_80_bits,80)
+
+    # Extracting the remaining 64 bits from the key
+    remaining_64_bits = ''.join(bit for index, bit in enumerate(key) if index + 1 not in keyp_80_bits)
+
+   
+
+    return remaining_80_bits, remaining_64_bits
+
+# Given key in hexadecimal
+key_hex = 'A1B2C3D4E5F67890A1B2C3D4E5F67890A1EA'
+# print(len(key_hex))
+
+# Convert key from hexadecimal to binary
+key_binary = hex2bin(key_hex)
+
+# Extract 80-bit key and the remaining 64 bits consistently
+extract_80_and_64_bit_keys(key_binary)
+# Extract 80-bit key and the remaining 64 bits consistently
+remaining_80_bits, remaining_64_bits=extract_80_and_64_bit_keys(key_binary)
 # print(len(remaining_80_bits))
+# print(len(remaining_64_bits))
+  # Print the extracted 80-bit key and the remaining 64 bits
+# print("80-bit Key:", bin2hex(remaining_80_bits))
+# print("Remaining 64 bits:", bin2hex(remaining_64_bits))
 
 # --parity bit drop table
 keyp = [57, 49, 41, 33, 25, 17, 9,
@@ -36,7 +52,7 @@ keyp = [57, 49, 41, 33, 25, 17, 9,
     
  
 # getting 56 bit key from 64 bit using the parity bits
-key56 = permute(key, keyp, 56)
+key56 = permute(remaining_64_bits, keyp, 56)
 # print(key56)
 # print(len(key56))
  
@@ -45,62 +61,7 @@ shift_table = [1, 1, 2, 2,
                2, 2, 2, 2,
                1, 2, 2, 2,
                2, 2, 2, 1]
-# shift_table = [1, 2, 1, 2,
-#                2, 1, 1, 2,
-#                2, 2, 1, 1,
-#                1, 1, 2, 2]
 
-# left_1 = key[0:56]
-# right_1 = key[56:128]
-
-# # Key- Compression Table : Compression of key from 56 bits to 48 bits
-# key_comp = [14, 17, 11, 24, 1, 5,
-#             3, 28, 15, 6, 21, 10,
-#             23, 19, 12, 4, 26, 8,
-#             16, 7, 27, 20, 13, 2,
-#             41, 52, 31, 37, 47, 55,
-#             30, 40, 51, 45, 33, 48,
-#             44, 49, 39, 56, 34, 53,
-#             46, 42, 50, 36, 29, 32]
- 
-# # Splitting
-# left_l = left_1[0:28]    # rkb for RoundKeys in binary
-# right_l = left_1[28:56]  # rk for RoundKeys in hexadecimal
-
-# left_r = right_1[0:28]
-# right_r = right_1[28:56]
-
-# rkb = []
-# rk = []
-# for i in range(0, 16):
-#     # Shifting the bits by nth shifts by checking from shift table
-#     #left 2 boxes
-#     left_l = shift_left(left_l, shift_table[i])
-#     right_l = shift_left(right_l, shift_table[i])
-
-#     #right 2 boxes
-#     left_r = shift_left(left_r, shift_table[i])
-#     right_r = shift_left(right_r, shift_table[i])
-
- 
-#     # Combination of left and right string
-#     combine_str1 = left_l + right_l
-
-#     combine_str2 = left_r + right_r
-
-    
- 
-#     # Compression of key from 56 to 48 bits
-#     round_key1 = permute(combine_str1, key_comp, 48)
-# #     print(round_key1)
-#     round_key2 = permute(combine_str2, key_comp, 48)
-# #     print(round_key2)
-
-#     round_key = xor(round_key1,round_key2)
-#     print(i,round_key)
- 
-#     rkb.append(round_key)
-#     rk.append(bin2hex(round_key))
 # Key- Compression Table : Compression of key from 56 bits to 48 bits
 key_comp = [14, 17, 11, 24, 1, 5,
             3, 28, 15, 6, 21, 10,
@@ -130,7 +91,3 @@ for i in range(0, 16):
  
     rkb.append(round_key)
     rk.append(bin2hex(round_key))
- 
-
- 
-
